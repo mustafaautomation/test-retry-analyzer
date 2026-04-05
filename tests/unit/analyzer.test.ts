@@ -131,3 +131,76 @@ describe('analyzeRetries', () => {
     expect(report.records[0].name).toBe('unstable');
   });
 });
+
+describe('analyzeRetries - additional', () => {
+  it('should calculate time saved by retries', () => {
+    const input: RetryInput[] = [
+      {
+        name: 'saved',
+        suite: 's',
+        attempts: [
+          { status: 'failed', duration: 100 },
+          { status: 'passed', duration: 150 },
+        ],
+      },
+    ];
+    const report = analyzeRetries(input);
+    expect(report.timeSavedByRetries).toBe(150);
+  });
+
+  it('should calculate avg retries per test', () => {
+    const input: RetryInput[] = [
+      {
+        name: 'a',
+        suite: 's',
+        attempts: [
+          { status: 'failed', duration: 50 },
+          { status: 'passed', duration: 50 },
+        ],
+      },
+      {
+        name: 'b',
+        suite: 's',
+        attempts: [
+          { status: 'failed', duration: 50 },
+          { status: 'failed', duration: 50 },
+          { status: 'passed', duration: 50 },
+        ],
+      },
+    ];
+    const report = analyzeRetries(input);
+    expect(report.avgRetriesPerTest).toBe(1.5);
+  });
+
+  it('should not count tests without retries in report records', () => {
+    const input: RetryInput[] = [
+      { name: 'no-retry', suite: 's', attempts: [{ status: 'passed', duration: 50 }] },
+      {
+        name: 'retried',
+        suite: 's',
+        attempts: [
+          { status: 'failed', duration: 50 },
+          { status: 'passed', duration: 50 },
+        ],
+      },
+    ];
+    const report = analyzeRetries(input);
+    expect(report.records).toHaveLength(1);
+    expect(report.records[0].name).toBe('retried');
+  });
+
+  it('should detect socket errors as infra', () => {
+    const input: RetryInput[] = [
+      {
+        name: 'socket',
+        suite: 's',
+        attempts: [
+          { status: 'failed', duration: 50, error: 'socket hang up' },
+          { status: 'passed', duration: 50 },
+        ],
+      },
+    ];
+    const report = analyzeRetries(input);
+    expect(report.records[0].classification).toBe('infra');
+  });
+});
