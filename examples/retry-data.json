@@ -1,0 +1,44 @@
+[
+  {
+    "name": "login flow",
+    "suite": "auth",
+    "attempts": [
+      { "status": "failed", "duration": 200, "error": "Timeout waiting for selector #login-btn" },
+      { "status": "passed", "duration": 150 }
+    ]
+  },
+  {
+    "name": "checkout validation",
+    "suite": "checkout",
+    "attempts": [
+      { "status": "failed", "duration": 500, "error": "Expected 201 but got 500" },
+      { "status": "failed", "duration": 480, "error": "Expected 201 but got 500" },
+      { "status": "failed", "duration": 510, "error": "Expected 201 but got 500" }
+    ]
+  },
+  {
+    "name": "product search",
+    "suite": "inventory",
+    "attempts": [
+      { "status": "failed", "duration": 30000, "error": "ECONNREFUSED 10.0.0.5:5432" },
+      { "status": "passed", "duration": 200 }
+    ]
+  },
+  {
+    "name": "add to cart",
+    "suite": "cart",
+    "attempts": [
+      { "status": "passed", "duration": 100 }
+    ]
+  },
+  {
+    "name": "payment processing",
+    "suite": "checkout",
+    "attempts": [
+      { "status": "failed", "duration": 150, "error": "Element not visible" },
+      { "status": "failed", "duration": 160, "error": "Element detached" },
+      { "status": "passed", "duration": 140 },
+      { "status": "failed", "duration": 155, "error": "Element not visible" }
+    ]
+  }
+]
